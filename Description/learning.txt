@@ -1,0 +1,225 @@
+说明：
+文件：stm32f10x_gpio.c
+IO口：
+GPIO_ReadOutputDateBit();//读取一组io口中的一个pin的信号
+GPIO_ReadOutputDate();//读取一组io口的信号
+
+GPIO_SetBits();//写入一组io口中的一个pin的信号
+GPIO_ResetBites();//写入一组io口的信号
+//调用BSRR BRR寄存器 32位
+GPIO_WriteBits();
+GPIO_Write();
+//调用ODR 16位
+
+GPIO_Init();
+=========================================================================
+led:
+pinSetlow(GPIOE, GPIO_Mode_Out_PP, GPIO_Speed_50MHz, GPIO_Pin_5, RCC_APB2Periph_GPIOE);
+=======================================================================================
+串口：
+文件：stm32f10x_usart.c
+void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct);//串口初始化
+void USART_ITConfig(USART_TypeDef* USARTx, uint16_t USART_IT, FunctionalState NewState);//串口的配置
+void USART_Cmd(USART_TypeDef* USARTx, FunctionalState NewState);//命令
+void USART_SendData(USART_TypeDef* USARTx, uint16_t Data);//发送数据,对象为单片机
+uint16_t USART_ReceiveData(USART_TypeDef* USARTx);接收数据，对象为单片机
+void USART_DeInit(USART_TypeDef* USARTx);//串口复位
+
+FlagStatus USART_GetFlagStatus(USART_TypeDef* USARTx, uint16_t USART_FLAG);
+void USART_ClearFlag(USART_TypeDef* USARTx, uint16_t USART_FLAG);
+ITStatus USART_GetITStatus(USART_TypeDef* USARTx, uint16_t USART_IT);//判断是否为接收
+void USART_ClearITPendingBit(USART_TypeDef* USARTx, uint16_t USART_IT);
+-------------------------------------------------------------------------------------
+if(USART_RX_STA&0x8000)
+		{					   
+			len=USART_RX_STA&0x3fff;//得到此次接收到的数据长度
+			printf("\r\n您发送的消息为:\r\n\r\n");
+			for(t=0;t<len;t++)
+			{
+				USART_SendData(USART1, USART_RX_BUF[t]);//向串口1发送数据，数据发送到电脑
+				while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);//等待发送结束
+			}
+			printf("\r\n\r\n");//插入换行
+			USART_RX_STA=0;
+		}else
+		{
+			times++;
+			if(times%5000==0)
+			{
+				printf("\r\n战舰STM32开发板 串口实验\r\n");
+				printf("正点原子@ALIENTEK\r\n\r\n");
+			}
+			if(times%200==0)printf("请输入数据,以回车键结束\n");  
+			if(times%30==0)           ;//闪烁LED,提示系统正在运行.
+			delay_ms(10);   
+		}
+---------------------------------------------------------------------------------------------
+main函数中初始化： 
+ usart.h
+ sys.h
+ void NVIC_Configuration(void);//设置中断优先分组
+ void uart_init(u32 bound);//中断初始化
+
+
+外部中断：
+stm32f10x_exti.h
+文件：exti.h   sys.h
+void NVIC_Configuration(void);//设置中断优先分组
+void EXTIX_Init(void);//外部中断初始化
+
+独立看门狗：
+stm32f10x_iwdg.c
+wdg.h
+
+void IWDG_Init(u8 prer,u16 rlr);//初始化函数
+
+void IWDG_Feed(void);//喂狗设置处置0xAAAA
+如果不进行喂狗，他就会没隔一段时间复位一次
+
+窗口看门狗：
+wdg.h
+
+void WWDG_Init(u8 tr,u8 wr,u32 fprer);//初始化WWDG
+void WWDG_Set_Counter(u8 cnt);       //设置WWDG的计数器
+void WWDG_NVIC_Init(void);
+
+调用：
+void NVIC_Configuration(void);//设置中断优先分组
+void WWDG_Init(u8 tr,u8 wr,u32 fprer);
+
+定时器：三种模式（该为向下）
+timer.h
+void TIM3_Int_Init(u16 arr,u16 psc);4999  7199
+定时时长：T=(arr+1)*(psc+1)/Tclk时钟频率72Mk  5000*7200/72=0.5s
+
+PWM实现：
+timer.h
+void TIM3_PWM_Init(u16 arr,u16 psc);
+					重载值   时钟预分频数
+调用：TIM3_PWM_Init(u16 arr,u16 psc);
+===========================================================
+M1Init_PID_Paramete(0.2,0.015,0.2) ;
+
+tem=M1PID_IncCalu(1888.0);
+			val=tem;
+			TIM_SetCompare2(TIM3,val);
+			OLED_ShowNum(30,3,val,4,16);
+			tem=tem-val;
+			tem*=10000;
+			val=tem;
+			OLED_ShowChar(62, 3,'.');
+			OLED_ShowNum(64,3,val,4,16);
+			delay_ms(100);
+			flag++;
+			if(flag==100){
+				delay_ms(2000);
+			}
+=============================================================
+void TIM_SetCompare2(TIM_TypeDef* TIMx, uint16_t Compare2)
+在TIMx模式下，比较值>计数器重载值 输出低
+
+输入捕获：（测试周期频率）注意：定时器6,7不能设置捕获
+
+adc:
+PA1
+=========================================================
+val=Get_Adc_Average(1,10);
+temp=(float)val*(3.3/4096);//整数
+		val=temp;
+		temp-=val;//小数
+		temp*=1000;
+		
+按键：
+t = KEY_Scan();
+		if(t){
+			switch(t){
+				case KEY_UP:					
+				case KEY_DOWN:					
+				case KEY_LEFT:					
+				case KEY_RIGHT:				
+				default:pinSetlow(GPIOB, GPIO_Mode_Out_PP, GPIO_Speed_50MHz, GPIO_Pin_5, RCC_APB2Periph_GPIOB);break;	
+			}
+		}else{
+				Delay(10);
+		}
+=====================================================================
+DAC：
+out1->PA4
+out2->PA5
+==========================================================
+float temp=0.0;
+		u16 val=0;
+		OLED_ShowString(40,0,"welcome!");
+		Dac1_Set_Vol(3000);
+		//Get_Adc_Average(1,10);
+		val=Get_Adc_Average(1,10);
+		temp=(float)val*(3.3/4096);
+		val=temp;//整数
+		OLED_ShowString(0,2,"int:");
+		OLED_ShowNum(30,2,val,2,16);
+		
+		temp-=val;//小数
+		temp*=1000;
+		OLED_ShowString(0,4,"float:");
+		OLED_ShowNum(60,4,temp,3,16);
+		delay_ms(300);
+========================================================
+DMA:数据从一个地址到另一个地址
+
+舵机：
+==========================================================
+for(led0pwmval=60;led0pwmval<190;led0pwmval++)                                                                          
+			 {            
+				TIM_SetCompare2(TIM3,led0pwmval);
+				delay_ms(50);                                         //延时多久很重要，自己一点点试。
+			 }
+			 for(led0pwmval=190;led0pwmval>60;led0pwmval--)
+			 {TIM_SetCompare2(TIM3,led0pwmval);
+			 delay_ms(50);
+			 }
+================================================================
+
+TFTLCD：
+X:239
+Y：319
+===================================================================
+LCD_DrawRectangle(30, 30, 60, 60);
+			LCD_ShowString(70,40,200,16,16,"welcome!");
+			POINT_COLOR=RED;//字体颜色
+			BACK_COLOR=WHITE;//背景颜色
+=====================================================================
+Rtc:
+========================================================================
+if(RTC_Init_flag==0)  LCD_ShowString(70,0,200,16,16,"INIT_SUCCESS");
+LCD_ShowNum(30,50,calendar.w_year,4,16);
+			LCD_ShowNum(70,50,calendar.w_month,2,16);
+			LCD_ShowNum(90,50,calendar.w_date,2,16);
+			LCD_ShowNum(110,50,calendar.week,1,16);
+			LCD_ShowNum(130,50,calendar.hour,2,16);
+			LCD_ShowNum(150,50,calendar.min,2,16);
+			LCD_ShowNum(170,50,calendar.sec,2,16);
+==========================================================================
+待机唤醒：
+说明：使用时先关闭外部中断内部的中断函数0，否者会出现函数重定义的错误
+未调试好
+
+RS458单片机间的通信
+
+SPI一种通信接口
+
+IIC:一种双线通信协议SDA和SCL
+USMART：串口调试工具
+定时器2中断服务程序使用了在里面
+
+FDC2244:
+while(FDC2214_Init());//初始化成功继续执行
+
+	res0 = Cap_Calculate(0);//采集数据
+	res1 = Cap_Calculate(1);
+	res2 = Cap_Calculate(2);
+	res3 = Cap_Calculate(3);
+	
+内部温度传感器:
+该传感器和ADC通道十六相连
+可以用来测CPU的温度
+精度有些差

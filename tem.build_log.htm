@@ -1,0 +1,64 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: μVision V5.25.2.0
+Copyright (C) 2018 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: 1 MACHENIKE, 1, LIC=V85Z9-426K3-IK1B7-ECYNU-AUNXW-Z542Z
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Professional  Version: 5.25.2.0
+Toolchain Path:  F:\KILE555\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 6 (build 750)
+Assembler:       Armasm.exe V5.06 update 6 (build 750)
+Linker/Locator:  ArmLink.exe V5.06 update 6 (build 750)
+Library Manager: ArmAr.exe V5.06 update 6 (build 750)
+Hex Converter:   FromElf.exe V5.06 update 6 (build 750)
+CPU DLL:         SARMCM3.DLL V5.25.2.0
+Dialog DLL:      DCM.DLL V1.17.1.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.1.0
+Dialog DLL:      TCM.DLL V1.35.1.0
+ 
+<h2>Project:</h2>
+C:\Users\MACHENIKE\Desktop\物理实验金赛_交通灯智能识别系统\STM32f103ZET6 - 副本\USER\tem.uvprojx
+Project File Date:  09/17/2018
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 6 (build 750)', folder: 'F:\KILE555\ARM\ARMCC\Bin'
+Build target 'goog'
+compiling main.c...
+main.c(181): warning:  #186-D: pointless comparison of unsigned integer with zero
+  				if(color<=4&&color>=0){  // 红灯
+main.c(24): warning:  #177-D: variable "data"  was declared but never referenced
+  		u8  raw_data[9]={0},data=0;
+main.c(25): warning:  #550-D: variable "datas"  was set but never used
+  		u16 datas[4]={0};
+main.c(26): warning:  #177-D: variable "rgbc"  was declared but never referenced
+  		RGBC rgbc={0,0,0,0};
+main.c(28): warning:  #177-D: variable "CT"  was declared but never referenced
+  		uint16_t CT=0,Lux=0;
+main.c(28): warning:  #177-D: variable "Lux"  was declared but never referenced
+  		uint16_t CT=0,Lux=0;
+main.c: 6 warnings, 0 errors
+linking...
+Program Size: Code=10306 RO-data=2434 RW-data=2940 ZI-data=1844  
+FromELF: creating hex file...
+"..\tem.axf" - 0 Error(s), 6 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.2.0.pack
+                Keil.STM32F1xx_DFP.2.2.0
+                STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_goog
+  F:\KILE555\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include
+
+<h2>Collection of Component Files used:</h2>
+Build Time Elapsed:  00:00:02
+</pre>
+</body>
+</html>
